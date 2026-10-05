@@ -33,3 +33,24 @@ http://localhost:8080/api/users
 **Service** contiene la lógica de negocio. Por ejemplo, cuando el stock de un producto llega a 0, el Service actualiza automáticamente el status a OUT_OF_STOCK. También valida datos y verifica duplicados antes de crear usuarios. El Service nunca importa Mongoose directamente.
 
 **Controller** solo gestiona el request y response HTTP. Llama al Service y retorna el status code apropiado.
+
+## Endpoints de Mocking
+
+### Generar datos sin guardar
+
+GET /api/mocks/users?qty=5 → Genera 5 usuarios simulados
+GET /api/mocks/products?qty=5 → Genera 5 productos simulados
+
+### Insertar datos en MongoDB (seed)
+
+POST /api/mocks/seed?entity=users&qty=10 → Inserta 10 usuarios
+POST /api/mocks/seed?entity=products&qty=10 → Inserta 10 productos
+POST /api/mocks/seed?entity=orders&qty=10 → Inserta 10 pedidos (requiere usuarios)
+POST /api/mocks/seed?entity=deliveries&qty=10 → Inserta 10 entregas (requiere pedidos)
+
+### Orden recomendado para seed completo
+
+1. POST /api/mocks/seed?entity=users&qty=10
+2. POST /api/mocks/seed?entity=products&qty=10
+3. POST /api/mocks/seed?entity=orders&qty=10
+4. POST /api/mocks/seed?entity=deliveries&qty=10

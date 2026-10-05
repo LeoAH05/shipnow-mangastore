@@ -6,7 +6,7 @@ const config = {
   NODE_ENV: process.env.NODE_ENV,
 };
 
-// Validación de variables críticas
+
 const requiredVars = ["PORT", "MONGODB_URI", "NODE_ENV"];
 requiredVars.forEach((key) => {
   if (!config[key]) {
