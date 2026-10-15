@@ -54,3 +54,40 @@ POST /api/mocks/seed?entity=deliveries&qty=10 → Inserta 10 entregas (requiere 
 2. POST /api/mocks/seed?entity=products&qty=10
 3. POST /api/mocks/seed?entity=orders&qty=10
 4. POST /api/mocks/seed?entity=deliveries&qty=10
+
+## Manejo de Errores
+
+### Estructura de respuesta de error
+
+Todos los errores responden con esta estructura uniforme:
+
+```json
+{
+  "status": "error",
+  "errorCode": "CODIGO_DEL_ERROR",
+  "message": "Descripción del error"
+}
+```
+
+### Casos de error para probar
+
+#### Producto no encontrado (404):
+GET /api/products/000000000000000000000000
+
+#### Usuario no encontrado (404):
+GET /api/users/000000000000000000000000
+
+#### Campos faltantes (400):
+POST /api/products con body vacío {}
+
+#### Email duplicado (400):
+POST /api/users con un email ya registrado
+
+#### Mock con cantidad inválida (400):
+GET /api/mocks/users?qty=-5
+
+#### Mock con entidad inválida (400):
+POST /api/mocks/seed sin el parámetro entity
+
+#### Mock sin usuarios previos (400):
+POST /api/mocks/seed?entity=orders sin haber creado usuarios
