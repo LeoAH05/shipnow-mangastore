@@ -1,30 +1,33 @@
 const mockService = require("./mock.service");
+const ErrorDictionary = require("../errors/errorDictionary");
 
 class MockController {
-  async getUsers(req, res) {
+  async getUsers(req, res, next) {
     try {
       const qty = parseInt(req.query.qty) || 10;
       const users = mockService.generateUsers(qty);
       res.json({ status: "success", payload: users });
     } catch (error) {
-      res.status(500).json({ status: "error", message: error.message });
+      next(error);
     }
   }
 
-  async getProducts(req, res) {
+  async getProducts(req, res, next) {
     try {
       const qty = parseInt(req.query.qty) || 10;
       const products = mockService.generateProducts(qty);
       res.json({ status: "success", payload: products });
     } catch (error) {
-      res.status(500).json({ status: "error", message: error.message });
+      next(error);
     }
   }
 
-  async seed(req, res) {
+  async seed(req, res, next) {
     try {
       const qty = parseInt(req.query.qty) || 10;
       const entity = req.query.entity;
+
+      if (!entity) throw ErrorDictionary.MOCK_INVALID_ENTITY();
 
       let result;
       switch (entity) {
@@ -41,12 +44,12 @@ class MockController {
           result = await mockService.seedDeliveries(qty);
           break;
         default:
-          return res.status(400).json({ status: "error", message: "Entidad no válida. Usá: users, products, orders, deliveries" });
+          throw ErrorDictionary.MOCK_INVALID_ENTITY();
       }
 
       res.json({ status: "success", payload: result });
     } catch (error) {
-      res.status(500).json({ status: "error", message: error.message });
+      next(error);
     }
   }
 }
