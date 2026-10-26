@@ -1,9 +1,9 @@
 const CustomError = require("../errors/CustomError");
+const logger = require("../config/logger");
 
 const errorHandler = (err, req, res, next) => {
-  console.error(`[ERROR] ${err.errorCode || "UNKNOWN"}: ${err.message}`);
-
   if (err instanceof CustomError) {
+    logger.warning(`[${err.errorCode}] ${err.message}`);
     return res.status(err.statusCode).json({
       status: "error",
       errorCode: err.errorCode,
@@ -11,6 +11,7 @@ const errorHandler = (err, req, res, next) => {
     });
   }
 
+  logger.error(`Error inesperado: ${err.message}`);
   return res.status(500).json({
     status: "error",
     errorCode: "INTERNAL_SERVER_ERROR",
