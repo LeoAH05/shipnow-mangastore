@@ -91,3 +91,32 @@ POST /api/mocks/seed sin el parámetro entity
 
 #### Mock sin usuarios previos (400):
 POST /api/mocks/seed?entity=orders sin haber creado usuarios
+
+## Logging con Winston
+
+### Herramienta utilizada
+Winston con rotación diaria de archivos mediante `winston-daily-rotate-file`.
+
+### Niveles de log
+| Nivel   | Descripción                        |
+|---------|-----------------------------------|
+| fatal   | Fallas críticas del sistema        |
+| error   | Errores inesperados del servidor   |
+| warning | Errores de negocio esperados       |
+| info    | Eventos importantes del servidor   |
+| http    | Requests HTTP                      |
+| debug   | Información detallada (desarrollo) |
+
+### Endpoint de prueba
+GET /api/logger/test → Genera logs en todos los niveles
+
+### Archivos de logs
+Los logs se guardan en la carpeta `/logs/`:
+- `error-YYYY-MM-DD.log` → solo errores y fatales
+- `combined-YYYY-MM-DD.log` → todos los niveles
+
+Los archivos de logs NO se suben a GitHub (.gitignore).
+
+### Comportamiento por entorno
+- **development**: muestra desde nivel `debug`
+- **production**: muestra desde nivel `info`
