@@ -8,6 +8,8 @@ const userRoutes = require("./routes/user.routes");
 const mockRouter = require("./mocks/mock.router");
 const loggerRouter = require("./routes/logger.routes");
 const errorHandler = require("./middlewares/errorHandler");
+const swaggerUi = require("swagger-ui-express");
+const swaggerSpec = require("./config/swagger");
 
 const app = express();
 
@@ -20,7 +22,7 @@ app.use("/api/products", productRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/mocks", mockRouter);
 app.use("/api/logger", loggerRouter);
-
+app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 app.use((req, res, next) => {
   logger.warning(`Ruta no encontrada: ${req.method} ${req.url}`);
