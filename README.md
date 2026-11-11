@@ -120,3 +120,33 @@ Los archivos de logs NO se suben a GitHub (.gitignore).
 ### Comportamiento por entorno
 - **development**: muestra desde nivel `debug`
 - **production**: muestra desde nivel `info`
+
+## Documentación de la API (Swagger)
+
+### Acceso
+Con el servidor levantado, la documentación interactiva está en:
+
+http://localhost:8080/api/docs
+
+### Cómo levantar el servidor
+1. npm install
+2. Crear el archivo .env a partir de .env.example
+3. node src/app.js
+
+### Módulos documentados
+- **Users**: GET, POST, PUT y DELETE de usuarios
+- **Products**: GET, POST, PUT y DELETE de productos
+- **Mocks**: generación de usuarios y productos simulados (GET) y carga de datos de prueba en MongoDB (POST /api/mocks/seed)
+- **Logger**: GET /api/logger/test (herramienta de validación del sistema de logs, no es una funcionalidad de negocio)
+- **Orders**: GET, POST, PUT y DELETE de pedidos (el total se calcula automáticamente; filtros por status y priority)
+- **Deliveries**: GET, POST, PUT y DELETE de entregas (asociadas a un pedido y, opcionalmente, a un repartidor con rol delivery)
+### Schemas reutilizables
+User, Product, Order, Delivery, ErrorResponse y SuccessResponse.
+
+### Errores documentados
+Todos los errores usan la estructura { status, errorCode, message }. Entre ellos: recurso no encontrado (404), campos faltantes o email duplicado (400), cantidad inválida en mocks (400) y error interno (500).
+
+### Aclaraciones para probar
+- Desde Swagger UI, usá el botón "Try it out" en cada endpoint.
+- Para POST /api/mocks/seed el orden recomendado es: users, products, orders y deliveries.
+- La configuración de Swagger está separada de las rutas en src/config/swagger.js.

@@ -10,12 +10,16 @@ const ErrorDictionary = {
   PRODUCT_NOT_FOUND: () => new CustomError("Producto no encontrado", 404, "PRODUCT_NOT_FOUND"),
   PRODUCT_MISSING_FIELDS: () => new CustomError("Faltan campos obligatorios: title, price, category", 400, "PRODUCT_MISSING_FIELDS"),
 
-  // Pedidos
+    // Pedidos
   ORDER_NOT_FOUND: () => new CustomError("Pedido no encontrado", 404, "ORDER_NOT_FOUND"),
   ORDER_INVALID_STATUS: () => new CustomError("Estado de pedido inválido", 400, "ORDER_INVALID_STATUS"),
+  ORDER_INVALID_PRIORITY: () => new CustomError("Prioridad de pedido inválida", 400, "ORDER_INVALID_PRIORITY"),
+  ORDER_MISSING_FIELDS: () => new CustomError("Faltan campos obligatorios: user, products", 400, "ORDER_MISSING_FIELDS"),
 
   // Entregas
   DELIVERY_NOT_FOUND: () => new CustomError("Entrega no encontrada", 404, "DELIVERY_NOT_FOUND"),
+  DELIVERY_INVALID_STATUS: () => new CustomError("Estado de entrega inválido", 400, "DELIVERY_INVALID_STATUS"),
+  DELIVERY_MISSING_FIELDS: () => new CustomError("Faltan campos obligatorios: order, address", 400, "DELIVERY_MISSING_FIELDS"),
 
   // Mocks
   MOCK_INVALID_QTY: () => new CustomError("La cantidad debe ser un número positivo mayor a 0", 400, "MOCK_INVALID_QTY"),
