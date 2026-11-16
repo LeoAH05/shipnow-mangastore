@@ -27,6 +27,15 @@ const ErrorDictionary = {
   MOCK_NO_USERS: () => new CustomError("No hay usuarios. Primero ejecutá POST /api/mocks/seed?entity=users", 400, "MOCK_NO_USERS"),
   MOCK_NO_ORDERS: () => new CustomError("No hay pedidos. Primero ejecutá POST /api/mocks/seed?entity=orders", 400, "MOCK_NO_ORDERS"),
   MOCK_SEED_ERROR: () => new CustomError("Error al insertar datos en MongoDB", 500, "MOCK_SEED_ERROR"),
+  
+  // Archivos
+  FILE_REQUIRED: () => new CustomError("Debés adjuntar un archivo", 400, "FILE_REQUIRED"),
+  FILE_INVALID_TYPE: () => new CustomError("Tipo de archivo no permitido. Usá PDF, JPG o PNG", 400, "FILE_INVALID_TYPE"),
+  FILE_TOO_LARGE: () => new CustomError("El archivo supera el tamaño máximo permitido (2 MB)", 413, "FILE_TOO_LARGE"),
+  FILE_INVALID_FIELD: () => new CustomError("El nombre del campo del archivo no es el esperado", 400, "FILE_INVALID_FIELD"),
+  DOCUMENT_TYPE_INVALID: () => new CustomError("Tipo de documento inválido. Usá: dni, license, address_proof, other", 400, "DOCUMENT_TYPE_INVALID"),
+  UPLOAD_INVALID_ENTITY: () => new CustomError("Entidad inválida. Usá: orders o deliveries", 400, "UPLOAD_INVALID_ENTITY"),
+  FILE_SAVE_ERROR: () => new CustomError("Error al guardar el archivo", 500, "FILE_SAVE_ERROR"),
 };
 
 module.exports = ErrorDictionary;

@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { DELIVERY_STATUS } = require("../constants");
+const fileMetadataSchema = require("./fileMetadata.schema");
 
 const deliverySchema = new mongoose.Schema({
   order: { type: mongoose.Schema.Types.ObjectId, ref: "Order", required: true },
@@ -11,6 +12,7 @@ const deliverySchema = new mongoose.Schema({
   },
   address: { type: String, required: true },
   estimatedDate: { type: Date },
+  receipts: { type: [fileMetadataSchema], default: [] },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Delivery", deliverySchema);

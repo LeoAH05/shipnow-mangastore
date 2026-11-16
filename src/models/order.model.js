@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { ORDER_STATUS, ORDER_PRIORITY } = require("../constants");
+const fileMetadataSchema = require("./fileMetadata.schema");
 
 const orderSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
@@ -20,6 +21,7 @@ const orderSchema = new mongoose.Schema({
     default: ORDER_PRIORITY.MEDIUM,
   },
   total: { type: Number, default: 0 },
+  receipts: { type: [fileMetadataSchema], default: [] },
 }, { timestamps: true });
 
 module.exports = mongoose.model("Order", orderSchema);

@@ -10,6 +10,7 @@ const deliveryRoutes = require("./routes/delivery.routes");
 const mockRouter = require("./mocks/mock.router");
 const loggerRouter = require("./routes/logger.routes");
 const errorHandler = require("./middlewares/errorHandler");
+const uploadRoutes = require("./routes/upload.routes");
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.use("/api/orders", orderRoutes);
 app.use("/api/deliveries", deliveryRoutes);
 app.use("/api/mocks", mockRouter);
 app.use("/api/logger", loggerRouter);
+app.use("/api/uploads", uploadRoutes);
 app.use("/api/docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 

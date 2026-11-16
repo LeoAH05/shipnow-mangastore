@@ -24,6 +24,13 @@ class UserRepository {
   async delete(id) {
     return await User.findByIdAndDelete(id);
   }
+    async addDocument(id, metadata) {
+    return await User.findByIdAndUpdate(
+      id,
+      { $push: { documents: metadata } },
+      { new: true }
+    ).select("-password -__v");
+  }
 }
 
 module.exports = new UserRepository();

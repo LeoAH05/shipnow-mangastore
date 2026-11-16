@@ -186,3 +186,41 @@ Los errores se validan con el formato { status, errorCode, message } definido en
 
 ### Datos de prueba y limpieza
 Cada grupo crea sus propios datos antes de cada test (usuarios, productos y pedidos de ejemplo) y vacía las colecciones con `beforeEach` y `after`. Al terminar toda la suite se elimina la base de test completa. Los tests no dependen del orden ni de datos cargados a mano, y la suite se puede correr varias veces seguidas.
+
+## Carga de archivos (Multer)
+
+### Endpoints
+- `POST /api/uploads/users/:id/documents`: sube un documento de usuario. Campo del archivo: `document`. Campo opcional `documentType`: dni, license, address_proof u other (por defecto other).
+- `POST /api/uploads/receipts/:entity/:id`: sube un comprobante. `:entity` es `orders` o `deliveries`. Campo del archivo: `receipt`.
+
+Ejemplo con curl:
+```bash
+curl -X POST http://localhost:8080/api/uploads/users/ID_USUARIO/documents \
+  -F "documentType=dni" -F "document=@dni.pdf"
+```
+También se pueden probar desde Swagger (`/api/docs`, sección Uploads).
+
+### Reglas de validación
+- Tipos permitidos: PDF, JPG y PNG.
+- Tamaño máximo: 2 MB.
+- Un solo archivo por request y con el nombre de campo esperado.
+- Si la entidad no existe o los datos son inválidos, el archivo se elimina y no queda huérfano.
+
+### Dónde se guardan
+- Configuración centralizada en `src/config/multer.js`.
+- Archivos en `uploads/documents/` (documentos de usuario) y `uploads/receipts/` (comprobantes), con nombre generado único.
+- La carpeta `uploads/` está en `.gitignore`: los archivos subidos no se suben al repositorio.
+- La ruta se configura con la variable `UPLOADS_DIR` (por defecto `uploads`; en testing `uploads_test`).
+
+### Qué se guarda en la base
+Solo metadatos (nunca el archivo): originalName, storedName, path, mimeType, size, documentType y uploadedAt.
+Se guardan en `User.documents`, `Order.receipts` y `Delivery.receipts`.
+
+### Errores
+Mismo formato `{ status, errorCode, message }`: FILE_REQUIRED, FILE_INVALID_TYPE, FILE_TOO_LARGE (413), FILE_INVALID_FIELD, DOCUMENT_TYPE_INVALID, UPLOAD_INVALID_ENTITY, USER_NOT_FOUND, ORDER_NOT_FOUND, DELIVERY_NOT_FOUND y FILE_SAVE_ERROR (500).
+
+### Logging
+Se registran la carga exitosa, el comprobante asociado, el intento de subir un tipo no permitido y los errores al guardar.
+
+### Tests
+`tests/uploads.test.js` cubre la carga correcta, archivo faltante, tipo de archivo y de documento inválidos, tamaño excedido, campo incorrecto y entidad inexistente. Usa la carpeta `uploads_test` y la limpia al terminar.

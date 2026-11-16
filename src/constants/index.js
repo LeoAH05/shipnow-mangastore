@@ -37,6 +37,31 @@ const DELIVERY_STATUS = Object.freeze({
   FAILED: "failed",
 });
 
+// ---- Carga de archivos ----
+const USER_DOCUMENT_TYPES = Object.freeze({
+  DNI: "dni",
+  LICENSE: "license",
+  ADDRESS_PROOF: "address_proof",
+  OTHER: "other",
+});
+
+const RECEIPT_TYPE = "receipt";
+
+const UPLOAD_FOLDERS = Object.freeze({
+  DOCUMENTS: "documents",
+  RECEIPTS: "receipts",
+});
+
+const FILE_FIELDS = Object.freeze({
+  DOCUMENT: "document",
+  RECEIPT: "receipt",
+});
+
+const FILE_RULES = Object.freeze({
+  ALLOWED_MIME_TYPES: Object.freeze(["application/pdf", "image/jpeg", "image/png"]),
+  MAX_SIZE_BYTES: 2 * 1024 * 1024, // 2 MB
+});
+
 module.exports = {
   ROLES,
   PRODUCT_STATUS,
@@ -44,4 +69,9 @@ module.exports = {
   ORDER_STATUS,
   ORDER_PRIORITY,
   DELIVERY_STATUS,
+  USER_DOCUMENT_TYPES,
+  RECEIPT_TYPE,
+  UPLOAD_FOLDERS,
+  FILE_FIELDS,
+  FILE_RULES,
 };

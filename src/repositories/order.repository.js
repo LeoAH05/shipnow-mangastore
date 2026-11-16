@@ -26,6 +26,13 @@ class OrderRepository {
   async delete(id) {
     return await Order.findByIdAndDelete(id);
   }
+    async addReceipt(id, metadata) {
+    return await Order.findByIdAndUpdate(
+      id,
+      { $push: { receipts: metadata } },
+      { new: true }
+    ).select("-__v");
+  }
 }
 
 module.exports = new OrderRepository();

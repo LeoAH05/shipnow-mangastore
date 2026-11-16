@@ -26,6 +26,13 @@ class DeliveryRepository {
   async delete(id) {
     return await Delivery.findByIdAndDelete(id);
   }
+    async addReceipt(id, metadata) {
+    return await Delivery.findByIdAndUpdate(
+      id,
+      { $push: { receipts: metadata } },
+      { new: true }
+    ).select("-__v");
+  }
 }
 
 module.exports = new DeliveryRepository();
