@@ -150,3 +150,39 @@ Todos los errores usan la estructura { status, errorCode, message }. Entre ellos
 - Desde Swagger UI, usá el botón "Try it out" en cada endpoint.
 - Para POST /api/mocks/seed el orden recomendado es: users, products, orders y deliveries.
 - La configuración de Swagger está separada de las rutas en src/config/swagger.js.
+
+## Testing
+
+### Herramientas
+- **Mocha**: organiza y ejecuta los tests.
+- **Chai**: validaciones (expect).
+- **Supertest**: peticiones HTTP a la app Express, sin abrir un puerto.
+- **cross-env**: permite definir NODE_ENV=test en Windows, Mac y Linux.
+
+### Cómo ejecutar los tests
+1. npm install
+2. Crear el archivo `.env.test` a partir de `.env.test.example`
+3. npm test
+
+### Entorno de testing separado
+Se usa una base de datos exclusiva: `mangastore_test`. Los tests leen `.env.test` (cuando NODE_ENV=test) y se niegan a correr si la URI no apunta a una base que termine en `_test`, para no tocar nunca datos reales. La app (`src/app.js`) está separada del arranque del servidor (`src/server.js`), por eso Supertest la importa sin abrir un puerto.
+
+### Variables de entorno necesarias (.env.test)
+- PORT: puerto de test (ej. 8081)
+- MONGODB_URI: conexión a la base de test (ej. .../mangastore_test)
+- NODE_ENV: test
+
+### Módulos cubiertos
+- **Users**: listar, consultar por ID, crear; errores 404 y 400 (campos faltantes, email duplicado).
+- **Orders**: listar (con filtro por estado), consultar por ID, crear (total calculado), actualizar estado; errores 400 y 404.
+- **Deliveries**: listar, crear, consultar; errores 400 y 404.
+- **Mocks**: generar usuarios y productos, seed en MongoDB; errores por cantidad negativa, entidad inválida y dependencias faltantes.
+- **Logger**: GET /api/logger/test.
+- **Swagger**: GET /api/docs/.
+- **Ruta inexistente**: 404 ROUTE_NOT_FOUND.
+- **Products**: listar (con filtro por categoría), consultar por ID, crear, actualizar (incluye paso a out_of_stock) y eliminar; errores 400 y 404.
+
+Los errores se validan con el formato { status, errorCode, message } definido en el módulo de manejo de errores.
+
+### Datos de prueba y limpieza
+Cada grupo crea sus propios datos antes de cada test (usuarios, productos y pedidos de ejemplo) y vacía las colecciones con `beforeEach` y `after`. Al terminar toda la suite se elimina la base de test completa. Los tests no dependen del orden ni de datos cargados a mano, y la suite se puede correr varias veces seguidas.
