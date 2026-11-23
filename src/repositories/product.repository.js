@@ -2,11 +2,17 @@ const Product = require("../models/product.model");
 const { PRODUCT_STATUS } = require("../constants");
 
 class ProductRepository {
-  async getAll(filters = {}) {
-    return await Product.find({ 
-      status: PRODUCT_STATUS.AVAILABLE, 
-      ...filters 
-    }).select("-__v");
+    async getAll(filters = {}, { page, limit }) {
+    const query = { status: PRODUCT_STATUS.AVAILABLE, ...filters };
+    const [docs, total] = await Promise.all([
+      Product.find(query)
+        .sort({ createdAt: -1, _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .select("-__v"),
+      Product.countDocuments(query),
+    ]);
+    return { docs, total };
   }
 
   async getById(id) {

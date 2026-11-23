@@ -14,7 +14,7 @@ const router = Router();
  * @swagger
  * /api/deliveries:
  *   get:
- *     summary: Obtener todas las entregas
+ *     summary: Obtener todas las entregas (paginado)
  *     tags: [Deliveries]
  *     parameters:
  *       - in: query
@@ -23,15 +23,17 @@ const router = Router();
  *           type: string
  *           enum: [pending, in_progress, completed, failed]
  *         description: Filtrar por estado
+ *       - $ref: '#/components/parameters/page'
+ *       - $ref: '#/components/parameters/limit'
  *     responses:
  *       200:
- *         description: Lista de entregas
+ *         description: Lista de entregas con el objeto pagination
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
  *       400:
- *         description: Estado inválido
+ *         description: Parámetros inválidos (estado, page o limit)
  *         content:
  *           application/json:
  *             schema:

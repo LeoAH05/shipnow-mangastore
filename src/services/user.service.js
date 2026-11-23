@@ -1,10 +1,12 @@
 const userRepository = require("../repositories/user.repository");
 const { ROLES } = require("../constants");
 const ErrorDictionary = require("../errors/errorDictionary");
+const { buildPagination } = require("../utils/pagination");
 
 class UserService {
-  async getAll() {
-    return await userRepository.getAll();
+    async getAll(pagination) {
+    const { docs, total } = await userRepository.getAll(pagination);
+    return { payload: docs, pagination: buildPagination(pagination, total) };
   }
 
   async getById(id) {

@@ -37,7 +37,7 @@ const DELIVERY_STATUS = Object.freeze({
   FAILED: "failed",
 });
 
-// ---- Carga de archivos ----
+
 const USER_DOCUMENT_TYPES = Object.freeze({
   DNI: "dni",
   LICENSE: "license",
@@ -62,6 +62,8 @@ const FILE_RULES = Object.freeze({
   MAX_SIZE_BYTES: 2 * 1024 * 1024, // 2 MB
 });
 
+const MOCK_MAX_QTY = 100;
+
 module.exports = {
   ROLES,
   PRODUCT_STATUS,
@@ -74,4 +76,5 @@ module.exports = {
   UPLOAD_FOLDERS,
   FILE_FIELDS,
   FILE_RULES,
+  MOCK_MAX_QTY,
 };

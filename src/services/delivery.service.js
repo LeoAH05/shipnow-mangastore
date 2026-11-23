@@ -4,6 +4,7 @@ const userRepository = require("../repositories/user.repository");
 const { DELIVERY_STATUS, ROLES } = require("../constants");
 const ErrorDictionary = require("../errors/errorDictionary");
 const logger = require("../config/logger");
+const { buildPagination } = require("../utils/pagination");
 
 class DeliveryService {
   validateStatus(status) {
@@ -21,9 +22,10 @@ class DeliveryService {
     }
   }
 
-  async getAll(filters = {}) {
+    async getAll(filters = {}, pagination) {
     this.validateStatus(filters.status);
-    return await deliveryRepository.getAll(filters);
+    const { docs, total } = await deliveryRepository.getAll(filters, pagination);
+    return { payload: docs, pagination: buildPagination(pagination, total) };
   }
 
   async getById(id) {

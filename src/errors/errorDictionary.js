@@ -36,6 +36,13 @@ const ErrorDictionary = {
   DOCUMENT_TYPE_INVALID: () => new CustomError("Tipo de documento inválido. Usá: dni, license, address_proof, other", 400, "DOCUMENT_TYPE_INVALID"),
   UPLOAD_INVALID_ENTITY: () => new CustomError("Entidad inválida. Usá: orders o deliveries", 400, "UPLOAD_INVALID_ENTITY"),
   FILE_SAVE_ERROR: () => new CustomError("Error al guardar el archivo", 500, "FILE_SAVE_ERROR"),
+
+  
+  // Performance y límites
+  PAGINATION_INVALID: () => new CustomError("Los parámetros page y limit deben ser números enteros positivos", 400, "PAGINATION_INVALID"),
+  MOCK_QTY_TOO_LARGE: () => new CustomError("La cantidad máxima permitida es 100", 400, "MOCK_QTY_TOO_LARGE"),
+  PAYLOAD_TOO_LARGE: () => new CustomError("El cuerpo de la petición supera el tamaño máximo permitido (100 kb)", 413, "PAYLOAD_TOO_LARGE"),
+  INVALID_JSON: () => new CustomError("El cuerpo de la petición no es un JSON válido", 400, "INVALID_JSON"),
 };
 
 module.exports = ErrorDictionary;

@@ -1,4 +1,5 @@
 const swaggerJsdoc = require("swagger-jsdoc");
+const config = require("./env.config");
 
 const options = {
   definition: {
@@ -10,11 +11,25 @@ const options = {
     },
     servers: [
       {
-        url: "http://localhost:8080",
+        url: config.PUBLIC_URL,
         description: "Servidor local",
       },
     ],
     components: {
+            parameters: {
+        page: {
+          in: "query",
+          name: "page",
+          schema: { type: "integer", minimum: 1, default: 1 },
+          description: "Número de página (por defecto 1)",
+        },
+        limit: {
+          in: "query",
+          name: "limit",
+          schema: { type: "integer", minimum: 1, maximum: 100, default: 10 },
+          description: "Resultados por página (por defecto 10, máximo 100)",
+        },
+      },
       schemas: {
         User: {
           type: "object",

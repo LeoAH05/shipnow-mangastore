@@ -40,7 +40,7 @@ const consoleFormat = winston.format.combine(
 const transports = [
   new winston.transports.Console({
     format: consoleFormat,
-    level: config.NODE_ENV === "production" ? "info" : "debug",
+    level: config.LOG_LEVEL,
   }),
   new DailyRotateFile({
     filename: "logs/error-%DATE%.log",
@@ -52,7 +52,7 @@ const transports = [
   new DailyRotateFile({
     filename: "logs/combined-%DATE%.log",
     datePattern: "YYYY-MM-DD",
-    level: config.NODE_ENV === "production" ? "info" : "debug",
+    level: config.LOG_LEVEL,
     maxFiles: "14d",
     format,
   }),

@@ -11,10 +11,9 @@ const { FILE_RULES } = require("../constants");
 const UPLOADS_ROOT = path.resolve(process.cwd(), config.UPLOADS_DIR);
 
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
+    destination: (req, file, cb) => {
     const dir = path.join(UPLOADS_ROOT, req.uploadFolder);
-    fs.mkdirSync(dir, { recursive: true });
-    cb(null, dir);
+    fs.mkdir(dir, { recursive: true }, (err) => cb(err, dir));
   },
   filename: (req, file, cb) => {
     const ext = path.extname(file.originalname).toLowerCase();
@@ -37,13 +36,13 @@ const upload = multer({
   limits: { fileSize: FILE_RULES.MAX_SIZE_BYTES, files: 1 },
 });
 
-// Define en qué subcarpeta de uploads se guarda (la usa "destination")
+
 const setUploadFolder = (folder) => (req, res, next) => {
   req.uploadFolder = folder;
   next();
 };
 
-// Traduce los errores de Multer al sistema de errores centralizado
+
 const uploadSingle = (fieldName) => (req, res, next) => {
   upload.single(fieldName)(req, res, (err) => {
     if (!err) return next();

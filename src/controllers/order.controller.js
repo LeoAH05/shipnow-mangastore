@@ -1,14 +1,15 @@
 const orderService = require("../services/order.service");
+const { parsePagination } = require("../utils/pagination");
 
 class OrderController {
-  async getAll(req, res, next) {
+    async getAll(req, res, next) {
     try {
       const { status, priority } = req.query;
       const filters = {};
       if (status) filters.status = status;
       if (priority) filters.priority = priority;
-      const orders = await orderService.getAll(filters);
-      res.json({ status: "success", payload: orders });
+      const result = await orderService.getAll(filters, parsePagination(req.query));
+      res.json({ status: "success", ...result });
     } catch (error) {
       next(error);
     }

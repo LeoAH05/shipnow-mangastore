@@ -224,3 +224,80 @@ Se registran la carga exitosa, el comprobante asociado, el intento de subir un t
 
 ### Tests
 `tests/uploads.test.js` cubre la carga correcta, archivo faltante, tipo de archivo y de documento inválidos, tamaño excedido, campo incorrecto y entidad inexistente. Usa la carpeta `uploads_test` y la limpia al terminar.
+
+## Producción y Docker (Módulo 8)
+
+### Variables de entorno
+Hay un archivo por ambiente (ninguno con datos reales se sube al repo):
+
+| Archivo | Ambiente | Ejemplo versionado |
+|---|---|---|
+| `.env` | desarrollo | `.env.example` |
+| `.env.test` | testing | `.env.test.example` |
+| `.env.production` | producción | `.env.production.example` |
+
+| Variable | Obligatoria | Descripción |
+|---|---|---|
+| `PORT` | Sí | Puerto de la API |
+| `MONGODB_URI` | Sí | URI de la base de datos |
+| `NODE_ENV` | Sí | `development`, `test` o `production` |
+| `LOG_LEVEL` | No | `fatal`, `error`, `warning`, `info`, `http` o `debug`. Por defecto: debug (desarrollo), warning (test) e info (producción) |
+| `UPLOADS_DIR` | No | Carpeta de archivos subidos (por defecto `uploads`) |
+| `PUBLIC_URL` | No | URL pública que muestra Swagger (por defecto `http://localhost:PORT`) |
+| `ENABLE_SWAGGER` | No | `true` o `false`. Por defecto apagado en producción |
+
+JWT no aplica en este proyecto porque ShipNow no tiene autenticación.
+Si falta una variable crítica o es inválida, la app no arranca y muestra un error claro.
+
+### Correr la API localmente
+1. `npm install`
+2. Crear `.env` a partir de `.env.example`
+3. `npm start` (modo producción local: `npm run start:prod`, requiere `.env.production`)
+
+### Correr los tests
+1. Crear `.env.test` a partir de `.env.test.example` (base `mangastore_test`)
+2. `npm test`
+
+### Swagger
+`http://localhost:8080/api/docs` (en producción solo si `ENABLE_SWAGGER=true`).
+
+### Performance
+- Los listados de usuarios, productos, pedidos y entregas están paginados: `page` (por defecto 1) y `limit` (por defecto 10, máximo 100). La respuesta incluye `pagination` con `page`, `limit`, `total`, `totalPages`, `hasPrevPage` y `hasNextPage`. Valores inválidos devuelven 400 `PAGINATION_INVALID`.
+- Los pedidos y entregas también se filtran por estado, y los pedidos por prioridad. Los productos se filtran por categoría.
+- Los mocks aceptan como máximo 100 registros por request (`MOCK_QTY_TOO_LARGE`).
+- El body JSON está limitado a 100 kb.
+- Los archivos subidos: máximo 2 MB, solo PDF, JPG y PNG, un archivo por request. La carpeta de destino se crea sin bloquear el Event Loop.
+
+### Health check
+`GET /api/health` devuelve `status`, `environment`, `uptime` (segundos) y `timestamp`. No expone datos sensibles.
+
+### Endpoints internos en producción
+- **Mocks** (`/api/mocks`) y **logger test** (`/api/logger/test`): no se montan en producción (responden 404). Insertan datos falsos o generan ruido de logs, y no tienen sentido en un entorno real.
+- **Swagger** (`/api/docs`): se controla con `ENABLE_SWAGGER`. Está apagado por defecto en producción. En `.env.production.example` queda en `true` para poder revisar la documentación desde el contenedor. En un despliegue real se recomienda `false`.
+- **Health** (`/api/health`): siempre disponible.
+
+### Docker
+Construir la imagen:
+```bash
+docker build -t shipnow-mangastore .
+```
+
+Ejecutar el contenedor (variables desde un archivo externo):
+```bash
+docker run -d --name shipnow -p 8080:8080 --env-file .env.production \
+  -v shipnow_uploads:/app/uploads -v shipnow_logs:/app/logs shipnow-mangastore
+```
+
+- Puerto de la API: **8080** (`-p 3000:8080` para usar otro puerto en tu máquina).
+- Probar: `http://localhost:8080/api/health`, `http://localhost:8080/api/docs` y `http://localhost:8080/api/products`.
+- Ver logs del contenedor: `docker logs shipnow`.
+- Apagar: `docker stop shipnow && docker rm shipnow`.
+- El archivo del `--env-file` no lleva comillas.
+- La imagen usa `node:22-alpine`, instala solo dependencias de producción, corre con un usuario no-root y tiene un `HEALTHCHECK` sobre `/api/health`.
+
+### Archivos que no deben subirse al repo
+`node_modules/`, `.env`, `.env.test`, `.env.production`, `logs/`, `uploads/`, `uploads_test/` y `coverage/` (están en `.gitignore`). El `.dockerignore` además deja fuera de la imagen `.git`, `tests` y los `.env*`.
+
+### Logs y uploads
+- Los logs se escriben en consola y en `logs/` con rotación diaria (se conservan 14 días). El nivel se controla con `LOG_LEVEL`.
+- Los archivos subidos van a `uploads/`. El sistema de archivos de un contenedor es temporal, por eso se montan volúmenes. Para un uso permanente real se recomienda un almacenamiento externo (por ejemplo S3). En la base solo se guardan metadatos.

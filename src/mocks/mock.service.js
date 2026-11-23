@@ -3,13 +3,16 @@ const User = require("../models/user.model");
 const Order = require("../models/order.model");
 const Delivery = require("../models/delivery.model");
 const Product = require("../models/product.model");
-const { ROLES } = require("../constants");
+const { ROLES, MOCK_MAX_QTY } = require("../constants");
 const ErrorDictionary = require("../errors/errorDictionary");
 
 class MockService {
-  validateQty(qty) {
+    validateQty(qty) {
     if (!qty || isNaN(qty) || qty <= 0) {
       throw ErrorDictionary.MOCK_INVALID_QTY();
+    }
+    if (qty > MOCK_MAX_QTY) {
+      throw ErrorDictionary.MOCK_QTY_TOO_LARGE();
     }
   }
 

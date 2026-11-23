@@ -1,11 +1,18 @@
 const Order = require("../models/order.model");
 
 class OrderRepository {
-  async getAll(filters = {}) {
-    return await Order.find(filters)
-      .populate("user", "name email")
-      .populate("products.product", "title price")
-      .select("-__v");
+    async getAll(filters = {}, { page, limit }) {
+    const [docs, total] = await Promise.all([
+      Order.find(filters)
+        .populate("user", "name email")
+        .populate("products.product", "title price")
+        .sort({ createdAt: -1, _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .select("-__v"),
+      Order.countDocuments(filters),
+    ]);
+    return { docs, total };
   }
 
   async getById(id) {

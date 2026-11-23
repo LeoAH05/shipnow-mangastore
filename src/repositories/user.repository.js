@@ -1,8 +1,16 @@
 const User = require("../models/user.model");
 
 class UserRepository {
-  async getAll() {
-    return await User.find().select("-password -__v");
+    async getAll({ page, limit }) {
+    const [docs, total] = await Promise.all([
+      User.find()
+        .sort({ createdAt: -1, _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .select("-password -__v"),
+      User.countDocuments(),
+    ]);
+    return { docs, total };
   }
 
   async getById(id) {

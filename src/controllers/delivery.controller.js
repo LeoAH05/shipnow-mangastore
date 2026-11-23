@@ -1,13 +1,14 @@
 const deliveryService = require("../services/delivery.service");
+const { parsePagination } = require("../utils/pagination");
 
 class DeliveryController {
-  async getAll(req, res, next) {
+    async getAll(req, res, next) {
     try {
       const { status } = req.query;
       const filters = {};
       if (status) filters.status = status;
-      const deliveries = await deliveryService.getAll(filters);
-      res.json({ status: "success", payload: deliveries });
+      const result = await deliveryService.getAll(filters, parsePagination(req.query));
+      res.json({ status: "success", ...result });
     } catch (error) {
       next(error);
     }

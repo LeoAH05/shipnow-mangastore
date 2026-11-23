@@ -14,7 +14,7 @@ const router = Router();
  * @swagger
  * /api/orders:
  *   get:
- *     summary: Obtener todos los pedidos
+ *     summary: Obtener todos los pedidos (paginado)
  *     tags: [Orders]
  *     parameters:
  *       - in: query
@@ -29,15 +29,17 @@ const router = Router();
  *           type: string
  *           enum: [low, medium, high]
  *         description: Filtrar por prioridad
+ *       - $ref: '#/components/parameters/page'
+ *       - $ref: '#/components/parameters/limit'
  *     responses:
  *       200:
- *         description: Lista de pedidos
+ *         description: Lista de pedidos con el objeto pagination
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
  *       400:
- *         description: Estado o prioridad inválidos
+ *         description: Parámetros inválidos (estado, prioridad, page o limit)
  *         content:
  *           application/json:
  *             schema:

@@ -14,15 +14,24 @@ const router = Router();
  * @swagger
  * /api/users:
  *   get:
- *     summary: Obtener todos los usuarios
+ *     summary: Obtener todos los usuarios (paginado)
  *     tags: [Users]
+ *     parameters:
+ *       - $ref: '#/components/parameters/page'
+ *       - $ref: '#/components/parameters/limit'
  *     responses:
  *       200:
- *         description: Lista de usuarios
+ *         description: Lista de usuarios con el objeto pagination
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/SuccessResponse'
+ *       400:
+ *         description: Parámetros inválidos (page o limit)
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/ErrorResponse'
  *       500:
  *         description: Error interno
  *         content:

@@ -1,13 +1,13 @@
 const productService = require("../services/product.service");
+const { parsePagination } = require("../utils/pagination");
 
 class ProductController {
-  async getAll(req, res, next) {
+    async getAll(req, res, next) {
     try {
       const { category } = req.query;
-      const products = category
-        ? await productService.getByCategory(category)
-        : await productService.getAll();
-      res.json({ status: "success", payload: products });
+      const filters = category ? { category } : {};
+      const result = await productService.getAll(filters, parsePagination(req.query));
+      res.json({ status: "success", ...result });
     } catch (error) {
       next(error);
     }

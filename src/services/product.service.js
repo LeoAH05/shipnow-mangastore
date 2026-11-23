@@ -1,10 +1,12 @@
 const productRepository = require("../repositories/product.repository");
 const { PRODUCT_STATUS } = require("../constants");
 const ErrorDictionary = require("../errors/errorDictionary");
+const { buildPagination } = require("../utils/pagination");
 
 class ProductService {
-  async getAll(filters = {}) {
-    return await productRepository.getAll(filters);
+    async getAll(filters = {}, pagination) {
+    const { docs, total } = await productRepository.getAll(filters, pagination);
+    return { payload: docs, pagination: buildPagination(pagination, total) };
   }
 
   async getById(id) {

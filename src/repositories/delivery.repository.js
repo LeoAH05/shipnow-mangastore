@@ -1,11 +1,18 @@
 const Delivery = require("../models/delivery.model");
 
 class DeliveryRepository {
-  async getAll(filters = {}) {
-    return await Delivery.find(filters)
-      .populate("order", "status priority total")
-      .populate("deliveryPerson", "name email")
-      .select("-__v");
+    async getAll(filters = {}, { page, limit }) {
+    const [docs, total] = await Promise.all([
+      Delivery.find(filters)
+        .populate("order", "status priority total")
+        .populate("deliveryPerson", "name email")
+        .sort({ createdAt: -1, _id: -1 })
+        .skip((page - 1) * limit)
+        .limit(limit)
+        .select("-__v"),
+      Delivery.countDocuments(filters),
+    ]);
+    return { docs, total };
   }
 
   async getById(id) {
